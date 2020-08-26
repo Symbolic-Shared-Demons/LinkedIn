@@ -11,9 +11,7 @@ const routes: Routes = [
   {
     path:"add-post",
     component: AddPostComponent
-  }
-
-
+  } 
 ];
 
 @NgModule({

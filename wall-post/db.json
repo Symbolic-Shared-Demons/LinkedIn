@@ -1,0 +1,11 @@
+{
+  "posts": [
+      {
+          "id": 1,
+          "title": "Test post",
+          "content": "This is the test post content",
+          "show": true
+
+      }
+  ]
+}

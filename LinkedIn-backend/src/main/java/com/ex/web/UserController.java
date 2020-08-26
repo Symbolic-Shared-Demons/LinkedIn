@@ -32,39 +32,56 @@ public class UserController {
         }
     }
 
-    @GetMapping(path="{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="/getUser/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity getUserByUsername(@PathVariable String username) {
+    public ResponseEntity getOtherUser(@PathVariable String username) {
         try {
-            return new ResponseEntity(this.service.getUser(username), HttpStatus.OK);
+            User u = this.service.getUser(username);
+            return new ResponseEntity(u, HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @RequestMapping(value="/addNewUser", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+
+    @GetMapping(path="/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity getNewUser(@RequestBody User u){
-        try{
-            return new ResponseEntity(this.service.getNewUser(u), HttpStatus.OK);
-        }catch(EntityNotFoundException ex){
+    public ResponseEntity getUserByUsername(@PathVariable String username) {
+        try {
+            User u = this.service.logInUser(username);
+            return new ResponseEntity(u, HttpStatus.OK);
+        } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping(path="/deleteUser/{username}", produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value="/addNewUser", method = RequestMethod.POST, produces =  MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity getNewUser(@RequestParam("username") String username,@RequestParam("password") String password,
+                                     @RequestParam("first_name") String firstName, @RequestParam("last_name") String lastName,
+                                     @RequestParam("email") String email){
+            User u = new User();
+            u.setUsername(username);
+            u.setEmail(email);
+            u.setFirstName(firstName);
+            u.setLastName(lastName);
+            u.setPassword(password);
+        try{
+            return new ResponseEntity(this.service.getNewUser(u), HttpStatus.OK);
+        }catch(EntityNotFoundException ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path="deleteUser/{username}", produces = MediaType.TEXT_PLAIN_VALUE)
     public String deleteUser(@PathVariable String username){
 
-        if(this.service.deleteUser(username)){
-            return "deleted";
-        }
-        else{
-            return "not-deleted";
-        }
+        this.service.deleteUser(username);
+        return "deleted";
 
     }
 
-    @GetMapping(path="/{username}/apply/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="{username}/apply/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity applyUser(@PathVariable int id, @PathVariable String username){
         try{
@@ -74,7 +91,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(path="/editUser/category/{username}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="editUser/category/{username}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity addCategoryUser(@PathVariable int id, @PathVariable String username){
         try{
@@ -84,19 +101,19 @@ public class UserController {
         }
     }
 
-    @GetMapping(path="/addPost/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="addPost/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity addPostUser(@PathVariable String username, @RequestBody Post p){
+    public ResponseEntity addPostUser(@PathVariable int id, @RequestBody Post p){
         try {
-            return new ResponseEntity(this.service.addPost(username, p), HttpStatus.OK);
+            return new ResponseEntity(this.service.addPost(id, p), HttpStatus.OK);
         }catch(EntityNotFoundException ex){
             return new ResponseEntity(ex.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping(path="/{username}/{password}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="checkCreds", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity checkCreds(@PathVariable String username, @PathVariable String password){
+    public ResponseEntity checkCreds(@RequestParam("username") String username,@RequestParam("password") String password){
         try {
             return new ResponseEntity(this.service.checkCreds(username,password), HttpStatus.OK);
         }catch(EntityNotFoundException ex){
@@ -104,7 +121,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(path="/deleteApply/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="deleteApply/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity deleteApply(@RequestBody Post p, @PathVariable String username){
         try {

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--    http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd-->
+
+    <context:property-placeholder location="test.properties"/>
+
+    <!-- enable annotation configuration -->
+    <context:annotation-config/>
+
+    <!-- enable component scanning for bean discovery -->
+    <context:component-scan base-package="com.ex"/>
+
+    <!-- enable web mvc annotations -->
+    <mvc:annotation-driven/>
+    <tx:annotation-driven/>
+
+    <!--  aspect bean-->
+    <bean id="logAspectBean" class="com.ex.logs.AspectLog"/>
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <!--aop config-->
+    <aop:config>
+        <!--      this pointcut describes any method in the SimpleCalculator class that returns any type and takes any parameters-->
+        <aop:pointcut id="pointcutAroundLogIn" expression="execution(* com.ex.service.UserService.logInUser(String))"/>
+        <!--    this point cut focuses specifically on the add method of the target-->
+        <aop:pointcut expression="execution(int com.ex.service.UserService.getNewUser(Object))" id="pointcutAfterCreateNewUser"/>
+
+        <!--    this point cut focuses specifically on the div method of the target-->
+        <aop:pointcut expression="execution(int com.ex.service.UserService.applyUser(String,int))" id="pointcutAroundApply"/>
+
+        <aop:pointcut expression="execution(int com.ex.service.UserService.addPost(String,Object))" id="pointcutAroundPost"/>
+
+        <aop:pointcut expression="execution(int com.ex.service.UserService.deleteApply(String,Object))" id="pointcutAroundDeleteApply"/>
+
+        <aop:pointcut expression="execution(int com.ex.service.UserService.addCategory(int,String))" id="pointcutAroundAddCategory"/>
+
+        <!--    create the aspect from our aspect bean-->
+        <aop:aspect id="calculatorAspectBefore" ref="logAspectBean">
+            <aop:after-returning method="afterCreateAcc" pointcut-ref="pointcutAfterCreateNewUser" returning="user"/>
+            <aop:around method="aroundLogIn" pointcut-ref="pointcutAroundLogIn"/>
+            <aop:around method="aroundAddCategory" pointcut-ref="pointcutAroundAddCategory"/>
+            <aop:around method="aroundApply" pointcut-ref="pointcutAroundApply"/>
+            <aop:around method="aroundDeleteApply" pointcut-ref="pointcutAroundDeleteApply"/>
+            <aop:around method="aroundPost" pointcut-ref="pointcutAroundPost"/>
+
+        </aop:aspect>
+    </aop:config>
+
+</beans>

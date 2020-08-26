@@ -1,10 +1,19 @@
 language: java
 java: openjdk 8
 
+services:
+  - docker
+
 git: 
   depth: false
 
 before_install:
   - chmod +x travis_script.sh
+  
+  #THE FOLLOWING CANNOT BE SETUP YET
+  # **docker build 
+  # **docker run
+  # **docker ps -a
+  # **docker run new files
 
 script: ./travis_script.sh

@@ -9,11 +9,13 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 
 @Repository
+@Transactional
 public class HibDao implements Dao {
     private SessionFactory sessionFactory;
 
@@ -31,11 +33,12 @@ public class HibDao implements Dao {
     public User addNewUser(User u){
 
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+        session.beginTransaction();
         session.save(u);
 
-        tx.commit();
+        session.getTransaction().commit();
         session.close();
+
 
         return u;
     }
@@ -43,23 +46,27 @@ public class HibDao implements Dao {
 
 
     @Override
+    @Transactional
     public User getExistingUser(String username) {
 
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+
 
         String hql = "from User where username = :u";
         Query query = session.createQuery(hql);
         query.setString("u", username);
 
         List<User> users = (List)query.list();
-        tx.commit();
-        session.close();
+
 
         for(User u: users){
-            return u;
+            session.close();
+            return getUserById(u.getId());
         }
+
+        session.close();
         return null;
+
     }
 
 
@@ -67,13 +74,15 @@ public class HibDao implements Dao {
     public List<Category> getAllCats(){
 
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+
+        session.beginTransaction();
 
         String hql = "from Category";
         Query query = session.createQuery(hql);
 
         List<Category> cats = (List) query.list();
-        tx.commit();
+
+        session.getTransaction().commit();
         session.close();
 
         return cats;
@@ -82,13 +91,14 @@ public class HibDao implements Dao {
     public List<Post> getAllPosts(){
 
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+        session.beginTransaction();
 
         String hql = "from Post";
         Query query = session.createQuery(hql);
 
         List<Post> posts = (List) query.list();
-        tx.commit();
+
+        session.getTransaction().commit();
         session.close();
 
         return posts;
@@ -96,36 +106,46 @@ public class HibDao implements Dao {
 
     public int deletePost(Post p){
 
+        p.setPostCat(null);
+        Session sess1 = this.sessionFactory.openSession();
+        for(User u: p.getAppliedUsers()){
+            u.getAppliedPosts().remove(p);
+            sess1.beginTransaction();
+            sess1.update(u);
+            sess1.getTransaction().commit();
+        }
+
+        p.setPoster(null);
+        Session sess = this.sessionFactory.openSession();
+        sess.beginTransaction();
+
+        sess.update(p);
+
+        sess.getTransaction().commit();
+        sess.close();
+
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+        session.beginTransaction();
 
-        String hql = "delete Post where id =:id";
-        Query query = session.createQuery(hql);
-        query.setParameter("id", p.getId());
 
-        int r = query.executeUpdate();
+        session.delete(p);
 
-        if(r == 1){
-            tx.commit();
-            session.close();
-            return r;
-        }
-        else{
-            tx.rollback();
-            session.close();
-            return r;
-        }
+        session.getTransaction().commit();
+        session.close();
+
+        return 1;
     }
 
-    public User userApply(String u, int p){
+    public User userApply(User u, Post p){
 
-        Post post = getPostById(p);
-        User user = getExistingUser(u);
+        u.addAppliedPosts(p);
 
-        user.addAppliedPosts(post);
-        updateUser(user);
-
-        return user;
+        Session session = this.sessionFactory.openSession();
+        session.beginTransaction();
+        session.update(u);
+        session.getTransaction().commit();
+        session.close();
+        return u;
 
     }
 
@@ -134,65 +154,74 @@ public class HibDao implements Dao {
         u.deleteApplied(p);
 
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+        session.beginTransaction();
 
         session.update(u);
 
-        tx.commit();
+        session.getTransaction().commit();
         session.close();
-
         return getExistingUser(u.getUsername());
     }
 
     @Override
-    public int deleteUser(String u){
+    public void deleteUser(int id){
+
+        User user = getUserById(id);
+
+        user.getAppliedPosts().clear();
+
+        Session sess1 = this.sessionFactory.openSession();
+        sess1.beginTransaction();
+
+        sess1.update(user);
+
+        sess1.getTransaction().commit();
+        sess1.close();
+
+
+        deleteAllPostsForUser(user);
+
+        user = getUserById(id);
+
+        user.getUserCats().clear();
+
+
+        Session sess = this.sessionFactory.openSession();
+        sess.beginTransaction();
+
+        sess.update(user);
+
+        sess.getTransaction().commit();
+        sess.close();
+
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+        session.beginTransaction();
 
-        String hql = "delete User where username =:username";
-        Query query = session.createQuery(hql);
-        query.setParameter("username", u);
 
-        int r = query.executeUpdate();
 
-        if(r == 1){
-            tx.commit();
-            session.close();
-            return r;
-        }
-        else{
-            tx.rollback();
-            session.close();
-            return r;
-        }
+
+        session.delete(user);
+
+        session.getTransaction().commit();
+        session.close();
     }
 
-    @Override
-    public User updateUser(User u) {
 
-        Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-
-        session.update(u);
-
-        tx.commit();
-
-        return u;
-    }
 
     @Override
     public boolean checkCreds(String username) {
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+        session.beginTransaction();
 
         String hql = "from User where username = ?";
         Query query = session.createQuery(hql);
-        query.setParameter(1,username);
+        query.setParameter(0,username);
 
         List user = query.list();
 
-        tx.commit();
+        session.getTransaction().commit();
         session.close();
+
 
         if(user.size() >= 1){
             return false;
@@ -206,14 +235,14 @@ public class HibDao implements Dao {
     public List<User> getAllUsers() {
 
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+        session.beginTransaction();
 
         String hql = "from User";
         Query query = session.createQuery(hql);
 
         List users = query.list();
 
-        tx.commit();
+        session.getTransaction().commit();
         session.close();
 
         return users;
@@ -223,17 +252,18 @@ public class HibDao implements Dao {
     @Override
     public boolean checkCreds(String username, String password) {
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+        session.beginTransaction();
 
         String hql = "from User where username = ? and password =?";
         Query query = session.createQuery(hql);
-        query.setParameter(1,username);
-        query.setParameter(2,password);
+        query.setParameter(0,username);
+        query.setParameter(1,password);
 
         List user = query.list();
 
-        tx.commit();
+        session.getTransaction().commit();
         session.close();
+
 
         if(user.size() >= 1){
             return true;
@@ -246,102 +276,134 @@ public class HibDao implements Dao {
     public Post getPostById(int p) {
 
         Session session = this.sessionFactory.openSession();
-        Criteria cr = session.createCriteria(Post.class);
-        cr.add(Restrictions.eq("id", p));
-        List<Post> posts = cr.list();
-        if(posts.size() >= 1){
-            return posts.get(0);
-        }
-        return null;
+        Post post = session.get(Post.class,p);
+        session.close();
+        return post;
     }
 
     @Override
     public Category getCategoryById(int c) {
 
         Session session = this.sessionFactory.openSession();
-        Criteria cr = session.createCriteria(Category.class);
-        cr.add(Restrictions.eq("id", c));
-        List<Category> cs = cr.list();
-        if(cs.size() >= 1){
-            return cs.get(0);
-        }
-        return null;
+        Category cat = session.get(Category.class, c);
+        session.close();
+        return cat;
     }
 
     @Override
     public List<Post> getPostsByCategory(Category c) {
         Session session = this.sessionFactory.openSession();
+        session.beginTransaction();
         Criteria cr = session.createCriteria(Post.class);
         cr.add(Restrictions.eq("postCat", c));
-        return cr.list();
+        List list = cr.list();
+        session.getTransaction().commit();
+        session.close();
+        return list;
     }
 
     @Override
     public User addCategoryForUser(Category c, User u) {
         u.addCat(c);
-        return updateUser(u);
+
+        Session session = this.sessionFactory.openSession();
+        session.beginTransaction();
+        session.update(u);
+        session.getTransaction().commit();
+        session.close();
+        return u;
     }
 
     @Override
     public User addPostForUser(User u, Post p) {
 
-        addNewPost(p);
+        p.setPoster(u);
+        Session session = this.sessionFactory.openSession();
+
+        addNewPost(p,session);
+
+        session.close();
 
         u.addPostedPost(p);
 
-        return updateUser(u);
+        return u;
     }
 
     @Override
     public List<Post> getPostsByUser(User u) {
         Session session = this.sessionFactory.openSession();
+        session.beginTransaction();
         Criteria cr = session.createCriteria(Post.class);
         cr.add(Restrictions.eq("poster", u));
-        return cr.list();
+        List list = cr.list();
+        session.getTransaction().commit();
+        session.close();
+        return list;
     }
 
     @Override
     public Set<Post> getPostsByApplied(User u) {
 
         Session session = this.sessionFactory.openSession();
+        session.beginTransaction();
         Criteria cr = session.createCriteria(User.class);
         cr.add(Restrictions.eq("id", u.getId()));
         if(cr.list().size() >= 1){
             u = (User) cr.list().get(0);
+            session.getTransaction().commit();
+            session.close();
             return u.getAppliedPosts();
         }
         else{
+            session.getTransaction().commit();
+            session.close();
             return null;
         }
     }
 
+
+
     @Override
-    public Category addNewCategory(Category c) {
-
-
+    public User getUserById(int id) {
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        session.save(c);
 
-        tx.commit();
+        User u = session.get(User.class,id);
+
         session.close();
 
-        return c;
+        return u;
+    }
+
+    @Override
+    public Post addNewPost(Post p, Session session) {
+
+
+        session.save(p);
+
+
+        return p;
 
     }
 
     @Override
-    public Post addNewPost(Post p) {
-
+    public void addLog(String m) {
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        session.save(p);
+        session.beginTransaction();
 
-        tx.commit();
+        Query q = session.createQuery("insert into linkedin.logs(message) values (" + m +")");
+        q.executeUpdate();
+
+        session.getTransaction().commit();
         session.close();
 
-        return p;
 
+    }
+
+    @Override
+    public void deleteAllPostsForUser(User u) {
+         for(Post p : u.getUserPosts()){
+            deletePost(p);
+        }
     }
 
 

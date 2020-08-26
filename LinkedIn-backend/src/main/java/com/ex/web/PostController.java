@@ -31,7 +31,7 @@ public class PostController {
         }
     }
 
-    @GetMapping(path="/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="{id}", produces=MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity getPostById(@PathVariable  int id){
         try{
@@ -41,7 +41,7 @@ public class PostController {
         }
     }
 
-    @GetMapping(path="/poster/{username}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="poster/{username}", produces=MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity getPostByUser(@PathVariable String username){
         try{
@@ -51,7 +51,7 @@ public class PostController {
         }
     }
 
-    @GetMapping(path="/applied/{username}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="applied/{username}", produces=MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity getPostByApplied(@PathVariable String username){
         try{
@@ -61,7 +61,7 @@ public class PostController {
         }
     }
 
-    @GetMapping(path="/category/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="category/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity getPostByCategory(@PathVariable int id){
         try{
@@ -71,7 +71,7 @@ public class PostController {
         }
     }
 
-    @GetMapping(path="/delete/{id}", produces=MediaType.TEXT_PLAIN_VALUE)
+    @GetMapping(path="delete/{id}", produces=MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String deletePost(@PathVariable int id){
         if(this.service.deletePost(id)){

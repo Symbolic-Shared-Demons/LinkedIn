@@ -33,7 +33,7 @@ public class CategoryController {
     }
 
 
-    @GetMapping(path="/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="{id}", produces=MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity getCategoryById(@PathVariable int id){
         try{
@@ -43,13 +43,4 @@ public class CategoryController {
         }
     }
 
-    @GetMapping(path="/addCategory", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity addNewCategory(@RequestBody Category c){
-        try{
-            return new ResponseEntity((this.service.addCategory(c)), HttpStatus.OK);
-        }catch(EntityNotFoundException ex){
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
 }

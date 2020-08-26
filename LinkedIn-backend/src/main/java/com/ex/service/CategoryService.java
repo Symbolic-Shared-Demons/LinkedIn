@@ -25,8 +25,5 @@ public class CategoryService {
         return dao.getCategoryById(id);
     }
 
-    public Category addCategory(Category c) {
 
-        return dao.addNewCategory(c);
-    }
 }

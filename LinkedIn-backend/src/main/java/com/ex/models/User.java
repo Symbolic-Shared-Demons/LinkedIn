@@ -1,11 +1,17 @@
 package com.ex.models;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users", schema = "LinkedIn")
+@Table(name = "users", schema = "linkedin")
+@Proxy(lazy = false)
 public class User {
 
     @Id
@@ -28,7 +34,7 @@ public class User {
     @Column(name="email")
     private String email;
 
-    @ManyToMany(cascade = { CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch=FetchType.EAGER)
     @JoinTable(
             name = "user_categories",
             joinColumns = { @JoinColumn(name = "user_id",  referencedColumnName="id", columnDefinition="INT") },
@@ -36,7 +42,7 @@ public class User {
     )
     private Set<Category> userCats;
 
-    @ManyToMany(cascade = { CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch=FetchType.EAGER)
     @JoinTable(
             name = "applied",
             joinColumns = { @JoinColumn(name = "user_id",  referencedColumnName="id", columnDefinition="INT") },
@@ -44,8 +50,7 @@ public class User {
     )
     private Set<Post> appliedPosts;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "posts", referencedColumnName = "poster", columnDefinition = "INT")
+    @OneToMany(mappedBy = "poster", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.EAGER)
     private Set<Post> userPosts;
 
     public User(String username, String password, String firstName, String lastName, String email, Set<Category> userCats, Set<Post> appliedPosts, Set<Post> userPosts) {
@@ -60,7 +65,9 @@ public class User {
     }
 
     public User(){
-
+        userCats = new HashSet<Category>();
+        appliedPosts = new HashSet<Post>();
+        userPosts = new HashSet<Post>();
     }
 
     public void deleteApplied(Post p){

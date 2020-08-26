@@ -24,6 +24,12 @@ public class UserService {
         return dao.getAllUsers();
     }
 
+    public User logInUser(String username){
+
+
+        return getUser(username);
+    }
+
     public User getUser(String username) {
         return dao.getExistingUser(username);
     }
@@ -39,17 +45,18 @@ public class UserService {
 
     }
 
-    public boolean deleteUser(String username){
-        if(dao.deleteUser(username) >= 1){
-                return true;
-            }
-            else{
-                return false;
-            }
+    public void deleteUser(String username){
+        User user = dao.getExistingUser(username);
+        dao.deleteUser(user.getId());
     }
 
     public User applyUser(String u, int p){
-        User user = dao.userApply(u,p);
+        User user = dao.getExistingUser(u);
+
+        user = dao.getUserById(user.getId());
+        Post post = dao.getPostById(p);
+
+        user = dao.userApply(user,post);
 
         return user;
 
@@ -63,8 +70,8 @@ public class UserService {
 
     }
 
-    public User addPost(String u, Post p){
-        User user = dao.getExistingUser(u);
+    public User addPost(int id, Post p){
+        User user = dao.getUserById(id);
 
         return dao.addPostForUser(user,p);
     }

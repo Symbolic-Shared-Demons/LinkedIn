@@ -1,9 +1,17 @@
 package com.ex.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "posts", schema = "LinkedIn")
+@Table(name = "posts", schema = "linkedin")
+@Proxy(lazy = false)
 
 @NamedNativeQueries(
         value={
@@ -44,27 +52,41 @@ public class Post {
 
     @ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinColumn(name="categories", referencedColumnName="id", columnDefinition="INT")
+
     private Category postCat;
 
-    @ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinColumn(name="users", referencedColumnName="id", columnDefinition="INT")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "poster")
+    @JsonIgnore
     private User poster;
+
+    @ManyToMany(mappedBy = "appliedPosts", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<User> appliedUsers;
 
 
 
     public Post(){
-
+        appliedUsers = new HashSet<User>();
     }
 
 
-    public Post(String desc, Category postCat, User u) {
+    public Post(String desc, Category postCat, User u, Set applied) {
 
         this.desc = desc;
         this.postCat = postCat;
         this.poster = u;
+        this.appliedUsers = applied;
 
     }
 
+    public Set<User> getAppliedUsers() {
+        return appliedUsers;
+    }
+
+    public void setAppliedUsers(Set<User> appliedUsers) {
+        this.appliedUsers = appliedUsers;
+    }
 
     public User getPoster() {
         return poster;
@@ -104,8 +126,12 @@ public class Post {
                 "id=" + id +
                 ", desc='" + desc + '\'' +
                 ", postCat=" + postCat +
-                ", poster=" + poster +
+                ", poster=" + poster.getId() +
                 '}';
+    }
+
+    public void addApplied(User u) {
+        appliedUsers.add(u);
     }
 }
 

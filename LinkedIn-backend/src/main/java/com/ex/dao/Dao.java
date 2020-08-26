@@ -2,6 +2,7 @@ package com.ex.dao;
 
 import com.ex.models.User;
 import com.ex.models.*;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,13 +22,11 @@ public interface Dao {
 
     int deletePost(Post p);
 
-    User userApply(String u, int p);
+    User userApply(User u, Post p);
 
-    User deleteApplied(User u, Post p);
 
-    int deleteUser(String u);
+    void deleteUser(int id);
 
-    User updateUser(User u);
 
     boolean checkCreds(String username);
 
@@ -49,9 +48,12 @@ public interface Dao {
 
     Set<Post> getPostsByApplied(User u);
 
-    Category addNewCategory(Category c);
+    User getUserById(int id);
 
-    Post addNewPost(Post p);
+    Post addNewPost(Post p, Session s);
 
+    void addLog(String m);
+
+    void deleteAllPostsForUser(User u);
 }
 

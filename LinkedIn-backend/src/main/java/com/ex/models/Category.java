@@ -1,10 +1,14 @@
 package com.ex.models;
 
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
+import java.util.Set;
 
 
 @Entity
-@Table(name = "categories", schema = "LinkedIn")
+@Table(name = "categories", schema = "linkedin")
+@Proxy(lazy = false)
 public class Category {
 
     @Id
@@ -14,6 +18,7 @@ public class Category {
 
     @Column(name = "title")
     private String title;
+
 
 
     public Category(){

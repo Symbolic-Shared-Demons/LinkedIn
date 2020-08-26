@@ -1,0 +1,33 @@
+
+_
+java:S1126Û"AReplace this if-then-else statement by a single return statement.(ã…Øú8ù»–ÃÂ.
+D
+java:S1905c"'Remove this unnecessary cast to "List".(ü¢¯8ù»–ÃÂ.
+Q
+java:S1128";Remove this unused import 'javax.annotation.PostConstruct'.(›ÅÁ
+g
+java:S1128"QRemove this unused import 'org.springframework.transaction.annotation.Isolation'.(±§ÂÔ
+\
+java:S1155Û">Use isEmpty() to check whether the collection is empty or not.(ã…Øú8ù»–ÃÂ.
+\
+java:S1155…">Use isEmpty() to check whether the collection is empty or not.(ã…Øú8ù»–ÃÂ.
+S
+java:S1751@"6Remove this "return" statement or make it conditional.(Áìî¹8’òÄÂ.
+I
+java:S1905S"'Remove this unnecessary cast to "List".(¡ƒÃ–úÿÿÿÿ8ù»–ÃÂ.
+I
+java:S1905;"'Remove this unnecessary cast to "List".(‘ö®úÿÿÿÿ8¿ÃÂ.
+R
+java:S3740Õ"/Provide the parametrized type for this generic.(¼„ğ£üÿÿÿÿ8ù»–ÃÂ.
+R
+java:S3740ÿ"/Provide the parametrized type for this generic.(¼„ğ£üÿÿÿÿ8ù»–ÃÂ.
+a
+java:S1155×">Use isEmpty() to check whether the collection is empty or not.(º²œÄıÿÿÿÿ8ù»–ÃÂ.
+_
+java:S1126…"AReplace this if-then-else statement by a single return statement.(ã…Øú8ù»–ÃÂ.
+I
+java:S1168à"+Return an empty collection instead of null.(¥¹ï8ù»–ÃÂ.
+{
+java:S2293n"YReplace the type specification in this constructor call with the diamond operator ("<>").(£ŠÕ¤ùÿÿÿÿ8Ş÷ßÂ.
+M
+java:S3740ì"/Provide the parametrized type for this generic.(…÷™–8ù»–ÃÂ.

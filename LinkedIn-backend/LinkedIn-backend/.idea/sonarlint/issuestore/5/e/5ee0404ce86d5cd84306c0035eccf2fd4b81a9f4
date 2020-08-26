@@ -1,0 +1,12 @@
+
+g
+java:S1128"ERemove this unused import 'org.hibernate.annotations.OnDeleteAction'.(ÅöŒ”üÿÿÿÿ8¹“ÇÙÂ.
+{
+java:S2293D"YReplace the type specification in this constructor call with the diamond operator ("<>").(ëş§Óÿÿÿÿÿ8ø³¶·Â.
+[	java:S1078"AConstructor has 8 parameters, which is greater than 7 authorized.(·¶íıÿÿÿÿ
+{
+java:S2293F"YReplace the type specification in this constructor call with the diamond operator ("<>").(¢Ñü…ûÿÿÿÿ8¼™··Â.
+{
+java:S2293E"YReplace the type specification in this constructor call with the diamond operator ("<>").(¦ˆ˜°şÿÿÿÿ8ø³¶·Â.
+a
+java:S1128"?Remove this unused import 'org.hibernate.annotations.OnDelete'.(¸´€áùÿÿÿÿ8¹“ÇÙÂ.

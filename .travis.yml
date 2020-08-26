@@ -1,0 +1,10 @@
+language: java
+java: openjdk 8
+
+git: 
+  depth: false
+
+before_install:
+  - chmod +x travis_script.sh
+
+script: ./travis_script.sh

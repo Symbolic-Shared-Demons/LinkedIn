@@ -1,9 +1,10 @@
 git config --global pull.rebase false
 git checkout master
 git pull
-cd ./Project2
+cd ./LinkedIn-backend
 
-mvn clean test -Dtest=**Insert testing class**
+mvn -Dtest=ModelTests clean test
+# mvn -DtestSourceDirectory=src/test/java/ModelTests clean test
 
 if [[ "$?" -ne 0 ]]
 then

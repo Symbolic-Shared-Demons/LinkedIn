@@ -1,16 +1,25 @@
 ﻿import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import * as FormData from 'form-data';
 
 import { environment } from '@environments/environment';
 import { User } from '@app/_models';
+import { request } from 'http';
+
+const httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+    })
+  }
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
     private userSubject: BehaviorSubject<User>;
     public user: Observable<User>;
+    public realUser:User;
 
     constructor(
         private router: Router,
@@ -24,15 +33,12 @@ export class AccountService {
         return this.userSubject.value;
     }
 
-    login(username, password) {
-        return this.http.post<User>(`${environment.apiUrl}/users/authenticate`, { username, password })
-            .pipe(map(user => {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('user', JSON.stringify(user));
-                this.userSubject.next(user);
-                return user;
-            }));
+
+
+    getUser(username, password):Observable<User>{
+        return this.http.get<User>('http://localhost:8080/LinkedIn_backend_war_exploded/api/users/checkCreds/' + username +"/"+password);
     }
+
 
     logout() {
         // remove user from local storage and set current user to null

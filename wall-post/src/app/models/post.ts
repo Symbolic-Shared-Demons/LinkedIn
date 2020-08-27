@@ -1,9 +1,6 @@
 export class Post {
-    public id?: number;
-    constructor(
-      public title: string,
-      public content: string,
-      
-    ) {}
+    public id:number;
+    public desc:string;
+    public postCat:Category;
   }
   

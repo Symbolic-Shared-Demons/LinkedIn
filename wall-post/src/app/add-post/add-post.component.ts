@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {PostserviceService} from '../_services/postservice.service'
 
 
 @Component({
@@ -11,18 +12,24 @@ export class AddPostComponent implements OnInit {
   private category: string;
   private job_post: string;
 
-  constructor() {} 
+  constructor(private postService: PostserviceService) {} 
    posts = [];
 
   ngOnInit(): void {
   }
-   addPost(title,content){
-     let post = {"title":title.value, "content": content.value}
+  addPost(c:Category,content){
+     let post = {id:0,
+      desc: content.value,
+      postCat:c
+    }
     this.posts.push(post);
     localStorage.setItem("posts", JSON.stringify(this.posts));
-    title.value="";
     content.value="";
-    alert("post submitted")
+
+    this.postService.addPost(post).subscribe(u =>{
+      localStorage.setItem('user', JSON.stringify(u));
+      alert("post submitted")
+    })
   
    }
 

@@ -10,7 +10,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { JwtInterceptor, ErrorInterceptor } from './_helpers';
 import { AppComponent } from './app.component';
 import { AlertComponent } from './_components';
-import { HomeComponent } from './home';
+import { HomeComponent } from './home';;
+import { CategorySideComponent } from './_components/category-side/category-side.component';
+import { EachCategoryComponent } from './_components/each-category/each-category.component';
+import { NavbarComponent } from './_components/navbar/navbar.component';
+import { AboutComponent } from './_components/about/about.component';
 
 @NgModule({
     imports: [
@@ -22,8 +26,12 @@ import { HomeComponent } from './home';
     declarations: [
         AppComponent,
         AlertComponent,
-        HomeComponent
-    ],
+        HomeComponent,
+        CategorySideComponent,
+        EachCategoryComponent,
+        NavbarComponent,
+        AboutComponent,
+            ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

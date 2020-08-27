@@ -9,13 +9,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { DeletePostComponent } from './delete-post/delete-post.component';
 import { UpdatePostComponent } from './update-post/update-post.component';
+import { HomePostComponent } from './home-post/home-post.component';
+import { EachPostComponent } from './each-post/each-post.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,  
-    AddPostComponent, DeletePostComponent, UpdatePostComponent
+    AddPostComponent, DeletePostComponent, UpdatePostComponent, HomePostComponent, EachPostComponent
   ],
   imports: [
     BrowserModule,

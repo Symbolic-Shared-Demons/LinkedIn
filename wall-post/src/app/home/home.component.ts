@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { PostServiceService } from '../post-service.service';
 import { Post } from '../models/post';
+import { PostserviceService } from '../_services/postservice.service';
+import { SelectMultipleControlValueAccessor } from '@angular/forms';
 
 
 @Component({
@@ -11,12 +12,16 @@ import { Post } from '../models/post';
 export class HomeComponent implements OnInit {
   posts: Post[];
 
-  newPost:Post = new Post("", "");
 
-  constructor(private postService: PostServiceService) { }
+  constructor(private postService:PostserviceService) { }
 
   ngOnInit(): void {
-    this.postService.getAllPosts().subscribe((p: Post[]) => (this.posts= p));
+
+    this.posts = [];
+
+    this.postService.getAllPosts().subscribe((p: Post[]) => {
+      (this.posts= p)
+    });
     console.log(this.posts)
   }
 
@@ -27,5 +32,6 @@ export class HomeComponent implements OnInit {
 
 
   }
+
 
 }

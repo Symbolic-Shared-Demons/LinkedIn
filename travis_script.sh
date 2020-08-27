@@ -3,7 +3,7 @@ git checkout master
 git pull
 cd ./Project2
 
-mvn clean test -Dtest=**Insert testing class**
+mvn -DtestSourceDirectory=src/test/java clean test
 
 if [[ "$?" -ne 0 ]]
 then

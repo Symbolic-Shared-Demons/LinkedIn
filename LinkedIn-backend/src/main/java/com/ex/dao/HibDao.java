@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Set;
 

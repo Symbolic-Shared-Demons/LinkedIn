@@ -3,7 +3,7 @@ git checkout master
 git pull
 cd ./LinkedIn-backend
 
-mvn -DtestSourceDirectory=src/test/java clean test
+mvn -DtestSourceDirectory=src/test/java/ModelTests clean test
 
 if [[ "$?" -ne 0 ]]
 then

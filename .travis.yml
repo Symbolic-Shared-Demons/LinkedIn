@@ -6,6 +6,7 @@ services:
 
 git: 
   depth: false
+  
 
 before_install:
   - chmod +x travis_script.sh

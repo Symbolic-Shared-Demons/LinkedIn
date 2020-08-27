@@ -1,7 +1,7 @@
 git config --global pull.rebase false
 git checkout master
 git pull
-cd ./Project2
+cd ./LinkedIn-backend
 
 mvn -DtestSourceDirectory=src/test/java clean test
 
